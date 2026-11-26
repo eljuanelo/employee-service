@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: employee-service-config
+data:
+  # Replace the example hostname with a MySQL instance reachable from the pods.
+  # Create the employee_db database on that instance before deploying.
+  DB_URL: "jdbc:mysql://mysql.example.com:3306/employee_db"
