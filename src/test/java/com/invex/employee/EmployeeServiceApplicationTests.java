@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class EmployeeServiceApplicationTests {
 
+	// Verifies that the application context starts with the test profile.
 	@Test
 	void contextLoads() {
 	}

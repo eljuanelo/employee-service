@@ -1,0 +1,31 @@
+# Version control and build output
+.git
+**/target
+**/out
+**/*.class
+
+# Local environment and configuration
+**/.env
+**/.env.*
+**/application-local.*
+**/application-local-*.*
+AGENTS.md
+
+# IDE configuration
+**/.vscode
+**/.idea
+**/*.iml
+**/.classpath
+**/.project
+**/.settings
+
+# Logs and temporary files
+**/logs
+**/*.log
+**/*.log.*
+**/*.tmp
+**/*.temp
+**/*.swp
+**/*~
+**/.DS_Store
+**/Thumbs.db

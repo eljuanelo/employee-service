@@ -36,3 +36,5 @@ HELP.md
 # Operating system files
 .DS_Store
 Thumbs.db
+# Local Kubernetes secrets
+/develop/secret.yaml
