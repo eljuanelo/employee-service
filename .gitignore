@@ -1,0 +1,38 @@
+# Build artifacts
+target/
+out/
+*.class
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# IDE configuration
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Environment variables and local configuration
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
+
+# Local development files
+AGENTS.md
+HELP.md
+
+# Operating system files
+.DS_Store
+Thumbs.db
