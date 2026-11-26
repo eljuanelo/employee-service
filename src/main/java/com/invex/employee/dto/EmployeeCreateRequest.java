@@ -18,34 +18,34 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EmployeeCreateRequest {
 
-    @NotBlank
-    @Size(max = 255)
+    @NotBlank(message = "must not be blank")
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String firstName;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String middleName;
 
-    @NotBlank
-    @Size(max = 255)
+    @NotBlank(message = "must not be blank")
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String lastName;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String secondLastName;
 
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message = "must not be null")
+    @PositiveOrZero(message = "must be greater than or equal to zero")
     private Integer age;
 
-    @NotNull
+    @NotNull(message = "must not be null")
     private Sex sex;
 
-    @NotNull
-    @Past
+    @NotNull(message = "must not be null")
+    @Past(message = "must be a past date")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 
-    @NotBlank
-    @Size(max = 255)
+    @NotBlank(message = "must not be blank")
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String position;
 
     private Boolean active;

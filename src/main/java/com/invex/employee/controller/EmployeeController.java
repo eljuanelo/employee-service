@@ -43,7 +43,8 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<List<EmployeeResponse>> create(
-            @RequestBody @NotEmpty List<@NotNull @Valid EmployeeCreateRequest> requests) {
+            @RequestBody @NotEmpty(message = "must not be empty")
+            List<@NotNull(message = "must not be null") @Valid EmployeeCreateRequest> requests) {
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.create(requests));
     }
 

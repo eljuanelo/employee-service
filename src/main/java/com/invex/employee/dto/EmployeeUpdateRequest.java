@@ -16,28 +16,28 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EmployeeUpdateRequest {
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String firstName;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String middleName;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String lastName;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String secondLastName;
 
-    @PositiveOrZero
+    @PositiveOrZero(message = "must be greater than or equal to zero")
     private Integer age;
 
     private Sex sex;
 
-    @Past
+    @Past(message = "must be a past date")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "must not exceed 255 characters")
     private String position;
 
     private Boolean active;
