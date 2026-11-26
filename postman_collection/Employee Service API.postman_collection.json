@@ -1,0 +1,315 @@
+{
+    "info":  {
+                 "_postman_id":  "e4b6d4d9-0ffc-4a3b-a042-b0a601c0d85e",
+                 "name":  "Employee Service API",
+                 "description":  "Employee Service API requests for JWT authentication and employee management.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "item":  [
+                 {
+                     "name":  "Login",
+                     "event":  [
+                                   {
+                                       "listen":  "test",
+                                       "script":  {
+                                                      "type":  "text/javascript",
+                                                      "exec":  [
+                                                                   "if (pm.response.code === 200) {\r\n    const response = pm.response.json();\r\n    pm.collectionVariables.set(\"token\", response.token);\r\n}"
+                                                               ]
+                                                  }
+                                   }
+                               ],
+                     "request":  {
+                                     "auth":  {
+                                                  "type":  "noauth"
+                                              },
+                                     "method":  "POST",
+                                     "header":  [
+
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n    \"username\": \"{{username}}\",\n    \"password\": \"{{password}}\"\n}",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              }
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/auth/login",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "auth",
+                                                              "login"
+                                                          ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Find all employees",
+                     "request":  {
+                                     "method":  "GET",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees"
+                                                          ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Create employee",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees"
+                                                          ]
+                                             },
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              },
+                                                  "raw":  "{\n    \"firstName\": \"Alex\",\n    \"lastName\": \"Garcia\",\n    \"age\": {{exampleAge0}},\n    \"sex\": \"FEMALE\",\n    \"birthDate\": \"08-06-1994\",\n    \"position\": \"Software Engineer\",\n    \"active\": true\n}"
+                                              }
+                                 },
+                     "response":  [
+
+                                  ],
+                     "event":  [
+                                   {
+                                       "script":  {
+                                                      "exec":  [
+                                                                   "if (pm.response.code === 201) {",
+                                                                   "    const employees = pm.response.json();",
+                                                                   "    if (Array.isArray(employees) \u0026\u0026 employees[0] \u0026\u0026 employees[0].id != null) {",
+                                                                   "        pm.collectionVariables.set(\"employeeId\", String(employees[0].id));",
+                                                                   "    }",
+                                                                   "}"
+                                                               ],
+                                                      "type":  "text/javascript"
+                                                  },
+                                       "listen":  "test"
+                                   }
+                               ]
+                 },
+                 {
+                     "name":  "Create multiple employees",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "[\r\n    {\r\n        \"firstName\": \"Maria\",\r\n        \"middleName\": \"Elena\",\r\n        \"lastName\": \"Garcia\",\r\n        \"secondLastName\": \"Hernandez\",\r\n        \"age\": {{exampleAge0}},\r\n        \"sex\": \"FEMALE\",\r\n        \"birthDate\": \"10-03-1995\",\r\n        \"position\": \"Business Analyst\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"firstName\": \"Pedro\",\r\n        \"lastName\": \"Martinez\",\r\n        \"age\": {{exampleAge1}},\r\n        \"sex\": \"MALE\",\r\n        \"birthDate\": \"20-08-1988\",\r\n        \"position\": \"Technical Lead\",\r\n        \"active\": true\r\n    },\r\n    {\r\n        \"firstName\": \"Ana\",\r\n        \"lastName\": \"Rodriguez\",\r\n        \"age\": {{exampleAge2}},\r\n        \"sex\": \"FEMALE\",\r\n        \"birthDate\": \"05-06-1992\",\r\n        \"position\": \"QA Engineer\",\r\n        \"active\": false\r\n    }\r\n]",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              }
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees"
+                                                          ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Find employee by ID",
+                     "request":  {
+                                     "method":  "GET",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees/{{employeeId}}",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees",
+                                                              "{{employeeId}}"
+                                                          ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Update employee",
+                     "request":  {
+                                     "method":  "PUT",
+                                     "header":  [
+
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\r\n    \"position\": \"Senior Software Engineer\",\r\n    \"active\": false\r\n}",
+                                                  "options":  {
+                                                                  "raw":  {
+                                                                              "language":  "json"
+                                                                          }
+                                                              }
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees/{{employeeId}}",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees",
+                                                              "{{employeeId}}"
+                                                          ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Search employees by name",
+                     "request":  {
+                                     "method":  "GET",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees/search?name={{searchName}}",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees",
+                                                              "search"
+                                                          ],
+                                                 "query":  [
+                                                               {
+                                                                   "key":  "name",
+                                                                   "value":  "{{searchName}}"
+                                                               }
+                                                           ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Delete employee",
+                     "request":  {
+                                     "method":  "DELETE",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/employees/{{employeeId}}",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "employees",
+                                                              "{{employeeId}}"
+                                                          ]
+                                             }
+                                 },
+                     "response":  [
+
+                                  ]
+                 }
+             ],
+    "auth":  {
+                 "type":  "bearer",
+                 "bearer":  [
+                                {
+                                    "key":  "token",
+                                    "type":  "string",
+                                    "value":  "{{token}}"
+                                }
+                            ]
+             },
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:8080"
+                     },
+                     {
+                         "key":  "token",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "username",
+                         "value":  "employee_api"
+                     },
+                     {
+                         "key":  "password",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "employeeId",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "searchName",
+                         "value":  "Gar"
+                     }
+                 ],
+    "event":  [
+                  {
+                      "script":  {
+                                     "exec":  [
+                                                  "const raw = pm.request.body \u0026\u0026 pm.request.body.raw;",
+                                                  "if (raw \u0026\u0026 raw.includes(\"{{exampleAge0}}\")) {",
+                                                  "    const payload = JSON.parse(raw.replace(/\\{\\{exampleAge\\d+\\}\\}/g, \"0\"));",
+                                                  "    const employees = Array.isArray(payload) ? payload : [payload];",
+                                                  "    const today = new Date();",
+                                                  "",
+                                                  "    employees.forEach((employee, index) =\u003e {",
+                                                  "        const [day, month, year] = employee.birthDate.split(\"-\").map(Number);",
+                                                  "        const currentMonth = today.getMonth() + 1;",
+                                                  "        const beforeBirthday = currentMonth \u003c month || (currentMonth === month \u0026\u0026 today.getDate() \u003c day);",
+                                                  "        const age = today.getFullYear() - year - Number(beforeBirthday);",
+                                                  "        pm.variables.set(\"exampleAge\" + index, String(age));",
+                                                  "    });",
+                                                  "}"
+                                              ],
+                                     "type":  "text/javascript"
+                                 },
+                      "listen":  "prerequest"
+                  }
+              ]
+}
