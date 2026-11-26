@@ -18,5 +18,21 @@ services:
       retries: 10
       start_period: 30s
 
+  employee-service:
+    build: .
+    container_name: employee-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:?MYSQL_DATABASE is required}
+      DB_USERNAME: ${DB_USERNAME:?DB_USERNAME is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      API_USERNAME: ${API_USERNAME:?API_USERNAME is required}
+      API_PASSWORD: ${API_PASSWORD:?API_PASSWORD is required}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+
 volumes:
   mysql-data:
