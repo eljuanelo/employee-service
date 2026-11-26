@@ -1,5 +1,6 @@
 package com.invex.employee.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.invex.employee.enums.Sex;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(description = "Partial update. Omitted and null fields retain their current values.")
 public class EmployeeUpdateRequest {
 
     @Size(max = 255, message = "must not exceed 255 characters")
@@ -34,6 +36,7 @@ public class EmployeeUpdateRequest {
     private Sex sex;
 
     @Past(message = "must be a past date")
+    @Schema(description = "Birth date in dd-MM-yyyy format.", example = "08-06-1994")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 

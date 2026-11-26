@@ -1,5 +1,6 @@
 package com.invex.employee.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,5 +16,6 @@ public class LoginRequest {
     private String username;
 
     @NotBlank(message = "must not be blank")
+    @Schema(format = "password", accessMode = Schema.AccessMode.WRITE_ONLY)
     private String password;
 }

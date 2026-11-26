@@ -1,6 +1,7 @@
 package com.invex.employee.exception;
 
 import com.invex.employee.dto.ErrorResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+@Hidden
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {

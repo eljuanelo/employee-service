@@ -4,6 +4,12 @@ import com.invex.employee.dto.ErrorResponse;
 import com.invex.employee.dto.LoginRequest;
 import com.invex.employee.dto.LoginResponse;
 import com.invex.employee.service.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +30,22 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Obtain a Bearer token.")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    @Operation(summary = "Log in", description = "Authenticates a username and password and issues a JWT.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Token issued.",
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Malformed body or missing credentials.",
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Invalid username or password.",
+                content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "415", description = "Unsupported request media type.", content = @Content)
+    })
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
