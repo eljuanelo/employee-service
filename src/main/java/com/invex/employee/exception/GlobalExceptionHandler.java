@@ -22,18 +22,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    // Returns HTTP 404 for a missing employee.
     @ExceptionHandler(EmployeeNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEmployeeNotFound(EmployeeNotFoundException exception,
                                                                HttpServletRequest request) {
         return buildResponse(exception, HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
+    // Returns HTTP 400 when a business validation fails.
     @ExceptionHandler(InvalidEmployeeDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidEmployeeData(InvalidEmployeeDataException exception,
                                                                   HttpServletRequest request) {
         return buildResponse(exception, HttpStatus.BAD_REQUEST, exception.getMessage(), request);
     }
 
+    // Reports invalid request body fields and their validation messages.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleInvalidMethodArgument(MethodArgumentNotValidException exception,
                                                                      HttpServletRequest request) {
@@ -44,6 +47,7 @@ public class GlobalExceptionHandler {
         return buildResponse(exception, HttpStatus.BAD_REQUEST, message, request);
     }
 
+    // Reports constraint violations with their parameter or field paths.
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exception,
                                                                   HttpServletRequest request) {
@@ -54,12 +58,14 @@ public class GlobalExceptionHandler {
         return buildResponse(exception, HttpStatus.BAD_REQUEST, message, request);
     }
 
+    // Returns a generic message for an unreadable request body.
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleUnreadableBody(HttpMessageNotReadableException exception,
                                                              HttpServletRequest request) {
         return buildResponse(exception, HttpStatus.BAD_REQUEST, "The request body is missing or malformed.", request);
     }
 
+    // Identifies an argument that could not be converted.
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException exception,
                                                            HttpServletRequest request) {
@@ -67,6 +73,7 @@ public class GlobalExceptionHandler {
         return buildResponse(exception, HttpStatus.BAD_REQUEST, message, request);
     }
 
+    // Identifies a missing required query parameter.
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException exception,
                                                                HttpServletRequest request) {
@@ -74,6 +81,7 @@ public class GlobalExceptionHandler {
         return buildResponse(exception, HttpStatus.BAD_REQUEST, message, request);
     }
 
+    // Logs the error type and builds the shared error response.
     private ResponseEntity<ErrorResponse> buildResponse(Exception exception, HttpStatus status, String message,
                                                        HttpServletRequest request) {
         log.warn("Request failed with HTTP {} ({})", status.value(), exception.getClass().getSimpleName());

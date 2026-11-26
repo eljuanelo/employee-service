@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeMapper {
 
+    // Maps creation fields and preserves the default active status when omitted.
     public Employee toEntity(EmployeeCreateRequest request) {
         Employee employee = new Employee();
         employee.setFirstName(request.getFirstName());
@@ -25,6 +26,7 @@ public class EmployeeMapper {
         return employee;
     }
 
+    // Copies employee fields, including generated values, to the response.
     public EmployeeResponse toResponse(Employee employee) {
         EmployeeResponse response = new EmployeeResponse();
         response.setId(employee.getId());
@@ -41,6 +43,7 @@ public class EmployeeMapper {
         return response;
     }
 
+    // Applies only non-null fields to the existing entity.
     public void updateEntity(EmployeeUpdateRequest request, Employee employee) {
         if (request.getFirstName() != null) {
             employee.setFirstName(request.getFirstName());

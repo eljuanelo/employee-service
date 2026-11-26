@@ -57,6 +57,7 @@ class SecurityIntegrationTest {
     @Value("${app.security.password}")
     private String password;
 
+    // Returns HTTP 200 with a Bearer token and its lifetime.
     @Test
     void loginReturnsBearerTokenForValidCredentials() throws Exception {
         login(username, password)
@@ -66,6 +67,7 @@ class SecurityIntegrationTest {
                 .andExpect(jsonPath("$.expiresIn").value(3600));
     }
 
+    // Returns HTTP 401 with a generic message for a wrong password.
     @Test
     void loginRejectsIncorrectPassword() throws Exception {
         login(username, password + "-incorrect")
@@ -73,6 +75,7 @@ class SecurityIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Invalid username or password."));
     }
 
+    // Returns HTTP 401 with the same message for an unknown user.
     @Test
     void loginRejectsIncorrectUsername() throws Exception {
         login(username + "-unknown", password)
@@ -80,6 +83,7 @@ class SecurityIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Invalid username or password."));
     }
 
+    // Returns HTTP 400 with validation messages for both blank fields.
     @Test
     void loginRejectsBlankCredentials() throws Exception {
         login("", "")
@@ -88,12 +92,14 @@ class SecurityIntegrationTest {
                 .andExpect(jsonPath("$.message").value(containsString("password: must not be blank")));
     }
 
+    // Returns HTTP 401 when the employee list is requested without a token.
     @Test
     void employeeListRejectsMissingToken() throws Exception {
         mockMvc.perform(get("/employees"))
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 200 with a token issued by login.
     @Test
     void employeeListAcceptsTokenIssuedByLogin() throws Exception {
         String token = loginToken();
@@ -103,6 +109,7 @@ class SecurityIntegrationTest {
                 .andExpect(jsonPath("$").isArray());
     }
 
+    // Returns HTTP 401 when the issued signature is changed.
     @Test
     void employeeListRejectsTokenWithModifiedSignature() throws Exception {
         String token = loginToken();
@@ -114,6 +121,7 @@ class SecurityIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 401 for a token past its expiration.
     @Test
     void employeeListRejectsExpiredToken() throws Exception {
         Instant now = Instant.now();
@@ -123,6 +131,7 @@ class SecurityIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 401 for an otherwise valid token signed with another key.
     @Test
     void employeeListRejectsTokenSignedWithDifferentKey() throws Exception {
         byte[] alternateKey = new byte[32];
@@ -135,24 +144,28 @@ class SecurityIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 401 for employee creation without authentication.
     @Test
     void createEmployeeRejectsUnauthenticatedRequest() throws Exception {
         mockMvc.perform(post("/employees").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 401 for an employee update without authentication.
     @Test
     void updateEmployeeRejectsUnauthenticatedRequest() throws Exception {
         mockMvc.perform(put("/employees/1").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 401 for employee deletion without authentication.
     @Test
     void deleteEmployeeRejectsUnauthenticatedRequest() throws Exception {
         mockMvc.perform(delete("/employees/1"))
                 .andExpect(status().isUnauthorized());
     }
 
+    // Returns HTTP 200 with status UP for each public health route.
     @ParameterizedTest
     @ValueSource(strings = {"/actuator/health", "/actuator/health/liveness", "/actuator/health/readiness"})
     void healthEndpointIsPublic(String path) throws Exception {
@@ -161,6 +174,7 @@ class SecurityIntegrationTest {
                 .andExpect(jsonPath("$.status").value("UP"));
     }
 
+    // Submits a JSON login request with the supplied credentials.
     private ResultActions login(String username, String password) throws Exception {
         LoginRequest request = new LoginRequest();
         request.setUsername(username);
@@ -169,6 +183,7 @@ class SecurityIntegrationTest {
                 .content(objectMapper.writeValueAsBytes(request)));
     }
 
+    // Logs in with test credentials and extracts the issued token.
     private String loginToken() throws Exception {
         byte[] body = login(username, password)
                 .andExpect(status().isOk())
@@ -176,6 +191,7 @@ class SecurityIntegrationTest {
         return objectMapper.readValue(body, LoginResponse.class).token();
     }
 
+    // Signs a test JWT with the supplied encoder and timestamps.
     private String signToken(JwtEncoder encoder, Instant issuedAt, Instant expiresAt) {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(SecurityConfig.JWT_ISSUER)

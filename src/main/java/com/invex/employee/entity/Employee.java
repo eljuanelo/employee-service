@@ -62,6 +62,7 @@ public class Employee {
     @Column(name = "active", nullable = false)
     private Boolean active = true;
 
+    // Sets the creation timestamp and defaults a null active status to true.
     @PrePersist
     private void initializeCreationFields() {
         createdAt = LocalDateTime.now();

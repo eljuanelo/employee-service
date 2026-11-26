@@ -26,18 +26,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
 
+    // Maps stored employees to response DTOs.
     @Override
     @Transactional(readOnly = true)
     public List<EmployeeResponse> findAll() {
         return toResponses(employeeRepository.findAll());
     }
 
+    // Loads and maps the employee with the requested ID.
     @Override
     @Transactional(readOnly = true)
     public EmployeeResponse findById(Long id) {
         return employeeMapper.toResponse(getEmployee(id));
     }
 
+    // Validates the entire batch before saving any employees.
     @Override
     @Transactional
     public List<EmployeeResponse> create(List<EmployeeCreateRequest> requests) {
@@ -57,6 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return toResponses(employeeRepository.saveAll(employees));
     }
 
+    // Applies requested changes and checks age when relevant.
     @Override
     @Transactional
     public EmployeeResponse update(Long id, EmployeeUpdateRequest request) {
@@ -78,6 +82,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeMapper.toResponse(employeeRepository.save(employee));
     }
 
+    // Loads the employee before physically deleting the record.
     @Override
     @Transactional
     public void delete(Long id) {
@@ -86,6 +91,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.delete(employee);
     }
 
+    // Rejects blank input and searches using the trimmed name.
     @Override
     @Transactional(readOnly = true)
     public List<EmployeeResponse> searchByName(String name) {
@@ -98,6 +104,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return toResponses(employees);
     }
 
+    // Requires an ID and throws when no employee matches it.
     private Employee getEmployee(Long id) {
         if (id == null) {
             throw new InvalidEmployeeDataException("An employee ID is required.");
@@ -108,16 +115,19 @@ public class EmployeeServiceImpl implements EmployeeService {
                     "Employee not found with ID: " + id));
     }
 
+    // Maps entities to responses while preserving their order.
     private List<EmployeeResponse> toResponses(List<Employee> employees) {
         return employees.stream().map(employeeMapper::toResponse).toList();
     }
 
+    // Rejects blank values while allowing omitted fields.
     private void validateNonBlank(String fieldName, String value) {
         if (value != null && value.isBlank()) {
             throw new InvalidEmployeeDataException(fieldName + " must not be blank.");
         }
     }
 
+    // Checks that the birth date is past and matches the age in completed years.
     private void validateAge(Integer age, LocalDate birthDate) {
         if (age == null || birthDate == null) {
             throw new InvalidEmployeeDataException("Age and birth date are required.");

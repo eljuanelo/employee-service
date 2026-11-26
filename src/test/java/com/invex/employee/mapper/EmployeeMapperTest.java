@@ -23,6 +23,7 @@ class EmployeeMapperTest {
 
     private final EmployeeMapper mapper = new EmployeeMapper();
 
+    // Copies creation fields and leaves generated fields unset.
     @Test
     void toEntityMapsAllRequestFields() {
         EmployeeCreateRequest request = new EmployeeCreateRequest();
@@ -51,6 +52,7 @@ class EmployeeMapperTest {
         assertNull(employee.getCreatedAt());
     }
 
+    // Keeps optional names null when omitted.
     @Test
     void toEntityLeavesOmittedOptionalNamesNull() {
         EmployeeCreateRequest request = new EmployeeCreateRequest();
@@ -61,6 +63,7 @@ class EmployeeMapperTest {
         assertNull(employee.getSecondLastName());
     }
 
+    // Keeps an explicit false active value during creation.
     @Test
     void toEntityPreservesExplicitInactiveStatus() {
         EmployeeCreateRequest request = new EmployeeCreateRequest();
@@ -71,6 +74,7 @@ class EmployeeMapperTest {
         assertEquals(Boolean.FALSE, employee.getActive());
     }
 
+    // Keeps the default active status when the request omits it.
     @Test
     void toEntityPreservesDefaultStatusWhenActiveIsOmitted() {
         EmployeeCreateRequest request = new EmployeeCreateRequest();
@@ -80,6 +84,7 @@ class EmployeeMapperTest {
         assertEquals(Boolean.TRUE, employee.getActive());
     }
 
+    // Copies all fields, including the ID and creation timestamp.
     @Test
     void toResponseMapsAllEmployeeFields() {
         Employee employee = existingEmployee();
@@ -100,6 +105,7 @@ class EmployeeMapperTest {
         assertEquals(employee.getActive(), response.getActive());
     }
 
+    // Updates editable fields while preserving the ID and creation timestamp.
     @Test
     void updateEntityUpdatesAllAllowedFieldsAndPreservesIdentityAndCreationDate() {
         Employee employee = existingEmployee();
@@ -129,6 +135,7 @@ class EmployeeMapperTest {
         assertEquals(CREATED_AT, employee.getCreatedAt());
     }
 
+    // Changes supplied fields and preserves the remaining values.
     @Test
     void updateEntityChangesOnlyFieldsPresentInPartialRequest() {
         Employee employee = existingEmployee();
@@ -149,6 +156,7 @@ class EmployeeMapperTest {
         assertEquals(Boolean.TRUE, employee.getActive());
     }
 
+    // Leaves existing values unchanged when all update fields are null.
     @Test
     void updateEntityPreservesExistingValuesWhenAllRequestFieldsAreNull() {
         Employee employee = existingEmployee();
@@ -168,6 +176,7 @@ class EmployeeMapperTest {
         assertEquals(Boolean.FALSE, employee.getActive());
     }
 
+    // Applies an explicit active status in both directions.
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void updateEntityAppliesExplicitActiveStatusInEitherDirection(boolean newStatus) {
@@ -181,6 +190,7 @@ class EmployeeMapperTest {
         assertEquals(Boolean.valueOf(newStatus), employee.getActive());
     }
 
+    // Builds an existing employee with a fixed ID and creation timestamp.
     private Employee existingEmployee() {
         Employee employee = new Employee();
         employee.setId(42L);

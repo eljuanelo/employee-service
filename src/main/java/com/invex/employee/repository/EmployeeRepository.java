@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
+    // Matches a fragment against any name field, ignoring case.
     @Query("""
             select e from Employee e
             where lower(e.firstName) like lower(concat('%', concat(:name, '%')))

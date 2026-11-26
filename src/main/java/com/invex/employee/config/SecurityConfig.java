@@ -43,6 +43,7 @@ public class SecurityConfig {
 
     public static final String JWT_ISSUER = "employee-service";
 
+    // Allows public routes and requires a valid JWT elsewhere.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -59,6 +60,7 @@ public class SecurityConfig {
                 .build();
     }
 
+    // Connects the in-memory user store and password encoder to authentication.
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
                                                        PasswordEncoder passwordEncoder) {
@@ -68,6 +70,7 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
+    // Creates the configured in-memory API user.
     @Bean
     public UserDetailsService userDetailsService(@Value("${app.security.username}") String username,
                                                  @Value("${app.security.password}") String password,
@@ -78,11 +81,13 @@ public class SecurityConfig {
                 .build());
     }
 
+    // Provides BCrypt for password hashing and verification.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Decodes the configured key and checks the minimum key length.
     @Bean
     public SecretKey jwtSecretKey(@Value("${app.jwt.secret}") String encodedSecret) {
         byte[] secret = Base64.getDecoder().decode(encodedSecret);
@@ -92,11 +97,13 @@ public class SecurityConfig {
         return new SecretKeySpec(secret, "HmacSHA256");
     }
 
+    // Provides the Nimbus encoder for signing tokens with the shared key.
     @Bean
     public JwtEncoder jwtEncoder(SecretKey jwtSecretKey) {
         return new NimbusJwtEncoder(new ImmutableSecret<>(jwtSecretKey));
     }
 
+    // Validates HS256 signatures, issuer, and token expiration.
     @Bean
     public JwtDecoder jwtDecoder(SecretKey jwtSecretKey) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)

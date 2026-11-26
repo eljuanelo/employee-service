@@ -23,6 +23,7 @@ public class JwtService {
         this.expiration = expiration;
     }
 
+    // Signs a JWT for the authenticated user and returns its lifetime.
     public LoginResponse issueToken(String username) {
         Instant issuedAt = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()

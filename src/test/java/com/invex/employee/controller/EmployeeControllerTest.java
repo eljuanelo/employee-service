@@ -52,6 +52,7 @@ class EmployeeControllerTest {
     @MockBean
     private EmployeeService employeeService;
 
+    // Returns HTTP 200 with employee data.
     @Test
     void findAllReturnsEmployees() throws Exception {
         when(employeeService.findAll()).thenReturn(List.of(response(1L, "Alex")));
@@ -65,6 +66,7 @@ class EmployeeControllerTest {
         verify(employeeService).findAll();
     }
 
+    // Returns HTTP 200 with an empty JSON array.
     @Test
     void findAllReturnsEmptyArray() throws Exception {
         when(employeeService.findAll()).thenReturn(List.of());
@@ -76,6 +78,7 @@ class EmployeeControllerTest {
         verify(employeeService).findAll();
     }
 
+    // Returns HTTP 200 with the requested employee.
     @Test
     void findByIdReturnsExistingEmployee() throws Exception {
         when(employeeService.findById(1L)).thenReturn(response(1L, "Alex"));
@@ -88,6 +91,7 @@ class EmployeeControllerTest {
         verify(employeeService).findById(1L);
     }
 
+    // Returns HTTP 404 with details for an unknown ID.
     @Test
     void findByIdReturnsNotFoundForMissingEmployee() throws Exception {
         when(employeeService.findById(1L)).thenThrow(new EmployeeNotFoundException("Employee not found."));
@@ -101,6 +105,7 @@ class EmployeeControllerTest {
         verify(employeeService).findById(1L);
     }
 
+    // Returns HTTP 400 for a malformed ID before calling the service.
     @Test
     void findByIdRejectsMalformedId() throws Exception {
         mockMvc.perform(get("/employees/invalid"))
@@ -110,6 +115,7 @@ class EmployeeControllerTest {
         verifyNoInteractions(employeeService);
     }
 
+    // Accepts one JSON object and returns HTTP 201 with an array.
     @Test
     void createAcceptsSingleEmployeeObject() throws Exception {
         EmployeeCreateRequest request = createRequest("Alex");
@@ -127,6 +133,7 @@ class EmployeeControllerTest {
                 && request.getBirthDate().equals(requests.get(0).getBirthDate())));
     }
 
+    // Accepts an employee array and returns HTTP 201 with both records.
     @Test
     void createAcceptsEmployeeArray() throws Exception {
         List<EmployeeCreateRequest> requests = List.of(createRequest("Alex"), createRequest("Sam"));
@@ -143,6 +150,7 @@ class EmployeeControllerTest {
                 .map(EmployeeCreateRequest::getFirstName).toList().equals(List.of("Alex", "Sam"))));
     }
 
+    // Returns HTTP 400 for missing required data before calling the service.
     @Test
     void createRejectsMissingRequiredFields() throws Exception {
         EmployeeCreateRequest request = createRequest("Alex");
@@ -156,6 +164,7 @@ class EmployeeControllerTest {
         verifyNoInteractions(employeeService);
     }
 
+    // Returns HTTP 400 for an empty employee batch.
     @Test
     void createRejectsEmptyArray() throws Exception {
         mockMvc.perform(post("/employees").contentType(MediaType.APPLICATION_JSON).content("[]"))
@@ -165,6 +174,7 @@ class EmployeeControllerTest {
         verifyNoInteractions(employeeService);
     }
 
+    // Returns HTTP 400 when the request body cannot be parsed.
     @Test
     void createRejectsMalformedJson() throws Exception {
         mockMvc.perform(post("/employees").contentType(MediaType.APPLICATION_JSON).content("{"))
@@ -174,6 +184,7 @@ class EmployeeControllerTest {
         verifyNoInteractions(employeeService);
     }
 
+    // Returns HTTP 400 with the business validation message.
     @Test
     void createReturnsBadRequestWhenServiceRejectsEmployee() throws Exception {
         EmployeeCreateRequest request = createRequest("Alex");
@@ -190,6 +201,7 @@ class EmployeeControllerTest {
         verify(employeeService).create(anyList());
     }
 
+    // Returns HTTP 200 and forwards the partial update.
     @Test
     void updateAcceptsPartialEmployeeData() throws Exception {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -206,6 +218,7 @@ class EmployeeControllerTest {
                 "Sam".equals(update.getFirstName()) && update.getActive() == null && update.getBirthDate() == null));
     }
 
+    // Returns HTTP 404 when the employee to update is missing.
     @Test
     void updateReturnsNotFoundForMissingEmployee() throws Exception {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -221,6 +234,7 @@ class EmployeeControllerTest {
         verify(employeeService).update(eq(1L), any(EmployeeUpdateRequest.class));
     }
 
+    // Returns HTTP 400 for a negative age before calling the service.
     @Test
     void updateRejectsInvalidEmployeeData() throws Exception {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -234,6 +248,7 @@ class EmployeeControllerTest {
         verifyNoInteractions(employeeService);
     }
 
+    // Returns HTTP 204 with an empty response body.
     @Test
     void deleteReturnsNoContent() throws Exception {
         mockMvc.perform(delete("/employees/1"))
@@ -243,6 +258,7 @@ class EmployeeControllerTest {
         verify(employeeService).delete(1L);
     }
 
+    // Returns HTTP 404 when the employee to delete is missing.
     @Test
     void deleteReturnsNotFoundForMissingEmployee() throws Exception {
         doThrow(new EmployeeNotFoundException("Employee not found.")).when(employeeService).delete(1L);
@@ -254,6 +270,7 @@ class EmployeeControllerTest {
         verify(employeeService).delete(1L);
     }
 
+    // Returns HTTP 200 with employees matching the query.
     @Test
     void searchByNameReturnsMatchingEmployees() throws Exception {
         when(employeeService.searchByName("Ale")).thenReturn(List.of(response(1L, "Alex")));
@@ -266,6 +283,7 @@ class EmployeeControllerTest {
         verify(employeeService).searchByName("Ale");
     }
 
+    // Returns HTTP 200 with an empty array when no employee matches.
     @Test
     void searchByNameReturnsEmptyArrayWhenNoEmployeesMatch() throws Exception {
         when(employeeService.searchByName("Unknown")).thenReturn(List.of());
@@ -277,6 +295,7 @@ class EmployeeControllerTest {
         verify(employeeService).searchByName("Unknown");
     }
 
+    // Returns HTTP 400 when the name parameter is absent.
     @Test
     void searchByNameRejectsMissingNameParameter() throws Exception {
         mockMvc.perform(get("/employees/search"))
@@ -286,6 +305,7 @@ class EmployeeControllerTest {
         verifyNoInteractions(employeeService);
     }
 
+    // Builds a valid creation request with a relative birth date.
     private EmployeeCreateRequest createRequest(String firstName) {
         EmployeeCreateRequest request = new EmployeeCreateRequest();
         request.setFirstName(firstName);
@@ -297,6 +317,7 @@ class EmployeeControllerTest {
         return request;
     }
 
+    // Builds a minimal employee response for JSON assertions.
     private EmployeeResponse response(Long id, String firstName) {
         EmployeeResponse response = new EmployeeResponse();
         response.setId(id);

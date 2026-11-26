@@ -31,6 +31,7 @@ class EmployeeRepositoryTest {
     @Autowired
     private EntityManager entityManager;
 
+    // Verifies that employee fields survive a round trip to the database.
     @Test
     void savesAndRetrievesEmployeeFields() {
         Employee employee = newEmployee("Alex");
@@ -49,6 +50,7 @@ class EmployeeRepositoryTest {
         assertEquals(employee.getPosition(), stored.getPosition());
     }
 
+    // Verifies that persistence assigns an ID to a new employee.
     @Test
     void generatesIdWhenSavingNewEmployee() {
         Employee employee = newEmployee("Alex");
@@ -60,6 +62,7 @@ class EmployeeRepositoryTest {
         assertEquals(employee.getId(), stored.getId());
     }
 
+    // Verifies that persistence initializes the creation timestamp.
     @Test
     void generatesCreationTimestampWhenSavingNewEmployee() {
         Employee employee = newEmployee("Alex");
@@ -70,6 +73,7 @@ class EmployeeRepositoryTest {
         assertNotNull(stored.getCreatedAt());
     }
 
+    // Verifies that an employee is stored as active by default.
     @Test
     void savesEmployeeAsActiveByDefault() {
         Employee employee = newEmployee("Alex");
@@ -79,6 +83,7 @@ class EmployeeRepositoryTest {
         assertEquals(Boolean.TRUE, stored.getActive());
     }
 
+    // Verifies that an explicitly inactive employee is stored as inactive.
     @Test
     void preservesExplicitInactiveStatus() {
         Employee employee = newEmployee("Alex");
@@ -89,6 +94,7 @@ class EmployeeRepositoryTest {
         assertEquals(Boolean.FALSE, stored.getActive());
     }
 
+    // Verifies that updating the position preserves the creation timestamp.
     @Test
     void updatesEmployeeWithoutChangingCreationTimestamp() {
         Employee employee = saveAndReload(newEmployee("Alex"));
@@ -102,6 +108,7 @@ class EmployeeRepositoryTest {
         assertEquals(originalCreatedAt, updated.getCreatedAt());
     }
 
+    // Verifies that a deleted row can no longer be fetched by ID.
     @Test
     void physicallyDeletesEmployee() {
         Employee employee = saveAndReload(newEmployee("Alex"));
@@ -114,6 +121,7 @@ class EmployeeRepositoryTest {
         assertTrue(employeeRepository.findById(id).isEmpty());
     }
 
+    // Verifies a partial match for each of the four name fields.
     @ParameterizedTest
     @ValueSource(strings = {"lex", "ayl", "org", "ee"})
     void findsPartialMatchInEachNameField(String nameFragment) {
@@ -127,6 +135,7 @@ class EmployeeRepositoryTest {
         assertEquals(List.of(id), matches.stream().map(Employee::getId).toList());
     }
 
+    // Verifies that a mixed-case search matches the stored name.
     @Test
     void findsMatchesIgnoringCase() {
         Long id = employeeRepository.saveAndFlush(newEmployee("Alex")).getId();
@@ -136,6 +145,7 @@ class EmployeeRepositoryTest {
         assertEquals(List.of(id), matches.stream().map(Employee::getId).toList());
     }
 
+    // Returns every matching employee and excludes non-matching records.
     @Test
     void returnsAllMatchingEmployees() {
         Long firstId = employeeRepository.saveAndFlush(newEmployee("Alex")).getId();
@@ -148,6 +158,7 @@ class EmployeeRepositoryTest {
         assertEquals(Set.of(firstId, secondId), matches.stream().map(Employee::getId).collect(Collectors.toSet()));
     }
 
+    // Returns an empty list when no name matches.
     @Test
     void returnsEmptyListWhenNoNameMatches() {
         employeeRepository.saveAndFlush(newEmployee("Alex"));
@@ -157,6 +168,7 @@ class EmployeeRepositoryTest {
         assertTrue(matches.isEmpty());
     }
 
+    // Matches a last name even when optional name fields are null.
     @Test
     void findsEmployeeByLastNameWhenOptionalNamesAreNull() {
         Employee employee = saveAndReload(newEmployee("Alex"));
@@ -168,12 +180,14 @@ class EmployeeRepositoryTest {
         assertNull(matches.get(0).getSecondLastName());
     }
 
+    // Flushes changes and clears the persistence context before reloading the employee.
     private Employee saveAndReload(Employee employee) {
         Long id = employeeRepository.saveAndFlush(employee).getId();
         entityManager.clear();
         return employeeRepository.findById(id).orElseThrow();
     }
 
+    // Builds an employee with required fields and optional names unset.
     private Employee newEmployee(String firstName) {
         Employee employee = new Employee();
         employee.setFirstName(firstName);

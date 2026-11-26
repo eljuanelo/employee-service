@@ -16,6 +16,7 @@ public class OpenApiConfig {
 
     public static final String BEARER_AUTH = "bearerAuth";
 
+    // Defines API metadata and the JWT Bearer scheme.
     @Bean
     public OpenAPI employeeOpenApi() {
         return new OpenAPI()
@@ -29,6 +30,7 @@ public class OpenApiConfig {
                         .bearerFormat("JWT")));
     }
 
+    // Documents both creation payload shapes and the birth date format.
     @Bean
     public OpenApiCustomiser employeeSchemas() {
         return openApi -> {

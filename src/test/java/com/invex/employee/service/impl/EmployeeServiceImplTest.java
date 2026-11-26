@@ -43,6 +43,7 @@ class EmployeeServiceImplTest {
     @InjectMocks
     private EmployeeServiceImpl employeeService;
 
+    // Returns mapped employees in repository order.
     @Test
     void findAllReturnsMappedEmployees() {
         Employee first = new Employee();
@@ -58,6 +59,7 @@ class EmployeeServiceImplTest {
         assertEquals(List.of(firstResponse, secondResponse), result);
     }
 
+    // Returns an empty list without invoking the mapper.
     @Test
     void findAllReturnsEmptyListWhenNoEmployeesExist() {
         when(employeeRepository.findAll()).thenReturn(List.of());
@@ -68,6 +70,7 @@ class EmployeeServiceImplTest {
         verifyNoInteractions(employeeMapper);
     }
 
+    // Returns the mapped response for an existing ID.
     @Test
     void findByIdReturnsMappedEmployee() {
         Employee employee = new Employee();
@@ -80,6 +83,7 @@ class EmployeeServiceImplTest {
         assertSame(response, result);
     }
 
+    // Throws when the repository finds no employee for the ID.
     @Test
     void findByIdRejectsMissingEmployee() {
         when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
@@ -89,6 +93,7 @@ class EmployeeServiceImplTest {
         verifyNoInteractions(employeeMapper);
     }
 
+    // Saves one employee and maps the persisted record.
     @Test
     void createSavesAndReturnsOneEmployee() {
         EmployeeCreateRequest request = createRequest(30);
@@ -105,6 +110,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository).saveAll(List.of(employee));
     }
 
+    // Saves multiple employees in one batch and returns their responses.
     @Test
     void createSavesMultipleEmployeesInOneBatch() {
         EmployeeCreateRequest firstRequest = createRequest(30);
@@ -126,6 +132,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository).saveAll(batch);
     }
 
+    // Rejects an empty request list before saving.
     @Test
     void createRejectsEmptyList() {
         List<EmployeeCreateRequest> requests = List.of();
@@ -135,6 +142,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository, never()).saveAll(any());
     }
 
+    // Rejects a null request element before saving.
     @Test
     void createRejectsNullListElement() {
         List<EmployeeCreateRequest> requests = Collections.singletonList(null);
@@ -144,6 +152,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository, never()).saveAll(any());
     }
 
+    // Rejects an age that conflicts with the birth date.
     @Test
     void createRejectsAgeThatDoesNotMatchBirthDate() {
         EmployeeCreateRequest request = createRequest(30);
@@ -154,6 +163,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository, never()).saveAll(any());
     }
 
+    // Rejects the entire batch before mapping or saving any employee.
     @Test
     void createRejectsEntireBatchWhenOneEmployeeIsInvalid() {
         EmployeeCreateRequest validRequest = createRequest(30);
@@ -167,6 +177,7 @@ class EmployeeServiceImplTest {
         verifyNoInteractions(employeeMapper);
     }
 
+    // Maps the changes and returns the response for the saved employee.
     @Test
     void updateMapsChangesAndReturnsSavedEmployee() {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -185,6 +196,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository).save(employee);
     }
 
+    // Rejects an unknown ID before mapping or saving changes.
     @Test
     void updateRejectsMissingEmployee() {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -196,6 +208,7 @@ class EmployeeServiceImplTest {
         verifyNoInteractions(employeeMapper);
     }
 
+    // Rejects a whitespace-only first name before mapping or saving.
     @Test
     void updateRejectsBlankFirstName() {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -208,6 +221,7 @@ class EmployeeServiceImplTest {
         verifyNoInteractions(employeeMapper);
     }
 
+    // Rejects the updated age when it conflicts with the stored birth date.
     @Test
     void updateRejectsAgeThatDoesNotMatchExistingBirthDate() {
         EmployeeUpdateRequest request = new EmployeeUpdateRequest();
@@ -226,6 +240,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository, never()).save(any());
     }
 
+    // Passes the existing employee to the repository for deletion.
     @Test
     void deleteRemovesExistingEmployee() {
         Employee employee = new Employee();
@@ -236,6 +251,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository).delete(employee);
     }
 
+    // Throws for an unknown ID without invoking delete.
     @Test
     void deleteRejectsMissingEmployee() {
         when(employeeRepository.findById(1L)).thenReturn(Optional.empty());
@@ -245,6 +261,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository, never()).delete(any());
     }
 
+    // Trims the search term and returns the mapped matches.
     @Test
     void searchByNameTrimsInputAndReturnsMappedMatches() {
         Employee employee = new Employee();
@@ -258,6 +275,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository).searchByName("Alex");
     }
 
+    // Returns an empty result without invoking the mapper.
     @Test
     void searchByNameReturnsEmptyListWhenNoEmployeesMatch() {
         when(employeeRepository.searchByName("Alex")).thenReturn(List.of());
@@ -268,6 +286,7 @@ class EmployeeServiceImplTest {
         verifyNoInteractions(employeeMapper);
     }
 
+    // Rejects whitespace-only input before querying the repository.
     @Test
     void searchByNameRejectsBlankName() {
         String name = "   ";
@@ -277,6 +296,7 @@ class EmployeeServiceImplTest {
         verify(employeeRepository, never()).searchByName(anyString());
     }
 
+    // Builds a request with a birth date consistent with the given age.
     private EmployeeCreateRequest createRequest(int age) {
         EmployeeCreateRequest request = new EmployeeCreateRequest();
         request.setAge(age);

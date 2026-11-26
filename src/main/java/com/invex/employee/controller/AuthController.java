@@ -36,6 +36,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    // Authenticates credentials and issues a Bearer token.
     @Operation(summary = "Log in", description = "Authenticates a username and password and issues a JWT.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Token issued.",
@@ -53,6 +54,7 @@ public class AuthController {
         return ResponseEntity.ok(jwtService.issueToken(authentication.getName()));
     }
 
+    // Returns the same HTTP 401 message for either invalid credential.
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(HttpServletRequest request) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;

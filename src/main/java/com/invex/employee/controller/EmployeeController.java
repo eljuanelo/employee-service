@@ -51,6 +51,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+    // Returns the employee list as JSON.
     @Operation(summary = "List employees", description = "Returns all employees or an empty array.")
     @ApiResponse(responseCode = "200", description = "Employee list.",
             content = @Content(mediaType = "application/json",
@@ -60,6 +61,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.findAll());
     }
 
+    // Returns one employee by ID.
     @Operation(summary = "Get an employee", description = "Returns the employee with the specified ID.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Employee found.",
@@ -74,6 +76,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.findById(id));
     }
 
+    // Accepts one or more employees and returns the created records.
     @Operation(summary = "Create employees",
             description = "Accepts one employee or a non-empty array. The batch is saved atomically. "
                     + "Adjust the example age to match the birth date when submitting a request.",
@@ -100,6 +103,7 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.create(requests));
     }
 
+    // Applies the requested fields and returns the updated employee.
     @Operation(summary = "Update an employee",
             description = "Applies only non-null fields. If age or birth date changes, the resulting values must agree.")
     @ApiResponses({
@@ -117,6 +121,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.update(id, request));
     }
 
+    // Deletes the employee and returns an empty response.
     @Operation(summary = "Delete an employee", description = "Permanently removes the employee with the specified ID.")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Employee deleted.", content = @Content),
@@ -131,6 +136,7 @@ public class EmployeeController {
         return ResponseEntity.noContent().build();
     }
 
+    // Returns employees that match the supplied name fragment.
     @Operation(summary = "Search employees by name",
             description = "Matches fragments of first, middle, or last names without regard to case.")
     @ApiResponses({

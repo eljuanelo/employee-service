@@ -23,6 +23,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     private static final int MAX_HEADER_LENGTH = 256;
     private static final Pattern UNSAFE_LOG_CHARACTERS = Pattern.compile("[\\p{Cc}\\p{Zl}\\p{Zp}]");
 
+    // Logs allowed headers, then records status and elapsed time as the chain exits.
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -42,6 +43,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         }
     }
 
+    // Bounds header length and replaces control and line separator characters.
     private String sanitizeHeader(String value) {
         if (value == null) {
             return null;

@@ -27,6 +27,7 @@ class RequestLoggingFilterTest {
     private Level originalLevel;
     private boolean originalAdditivity;
 
+    // Attaches a test appender and enables DEBUG for the filter.
     @BeforeEach
     void captureFilterLogs() {
         originalLevel = logger.getLevel();
@@ -37,6 +38,7 @@ class RequestLoggingFilterTest {
         logger.setLevel(Level.DEBUG);
     }
 
+    // Removes the test appender and restores the original logger settings.
     @AfterEach
     void restoreLogger() {
         logger.detachAppender(appender);
@@ -45,6 +47,7 @@ class RequestLoggingFilterTest {
         appender.stop();
     }
 
+    // Logs the allowed headers and HTTP 401 while excluding sensitive request data.
     @Test
     void logsAllowedHeadersAndResponseWithoutSensitiveRequestData() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/employees");
@@ -69,6 +72,7 @@ class RequestLoggingFilterTest {
         assertTrue(appender.list.get(1).getFormattedMessage().matches("HTTP POST /employees status=401 durationMs=\\d+"));
     }
 
+    // Replaces unsafe characters and limits the logged header length.
     @Test
     void sanitizesAndTruncatesHeaderValues() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/employees");
@@ -80,6 +84,7 @@ class RequestLoggingFilterTest {
                 appender.list.get(0).getFormattedMessage());
     }
 
+    // Logs the response status at INFO and propagates the original exception.
     @Test
     void logsResponseStatusAndPropagatesChainException() {
         logger.setLevel(Level.INFO);
